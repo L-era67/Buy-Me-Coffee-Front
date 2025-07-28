@@ -37,6 +37,7 @@ export const Sidebar = () => {
             <p className="">Account settings</p>
           </Button>
         </Link>
+        sadasd
       </div>
     </div>
   );
