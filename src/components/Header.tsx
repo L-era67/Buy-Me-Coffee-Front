@@ -1,8 +1,6 @@
+"use client";
 import { ChevronDown, CoffeeIcon } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -11,7 +9,7 @@ import {
 
 export const Header = () => {
   return (
-    <div className="justify-between flex mx-20 my-4 ">
+    <div className="justify-between flex mx-30 my-4 ">
       <p className="font-bold flex gap-[10px]">
         <CoffeeIcon className="w-6" />
         Buy Me Coffee
