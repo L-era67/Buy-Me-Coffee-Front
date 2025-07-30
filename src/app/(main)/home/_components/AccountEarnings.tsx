@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, SquareArrowOutUpRight } from "lucide-react";
 
@@ -15,28 +16,19 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 const earnings = [
   {
     earns: "450$",
   },
 ];
-const amount = [
-  {
-    amount: "1$",
-  },
-  {
-    amount: "2$",
-  },
-  {
-    amount: "5$",
-  },
-  {
-    amount: "10$",
-  },
-];
 
 export const AccountEarnings = () => {
+  const [selected, setSelected] = useState("Select");
+  const handleSelect = (value: string) => {
+    setSelected(value);
+  };
   return (
     <div className="">
       <div className="border-2 w-[907px] h-[257px] border-[#E4E4E7] rounded-lg">
@@ -66,13 +58,19 @@ export const AccountEarnings = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
-                  Select <ChevronDown></ChevronDown>
+                  {selected} <ChevronDown></ChevronDown>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="start">
-                <DropdownMenuItem>Last 30 days</DropdownMenuItem>
-                <DropdownMenuItem>Last 90 days</DropdownMenuItem>
-                <DropdownMenuItem>All time</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleSelect("Last 30 days")}>
+                  Last 30 days
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleSelect("Last 90 days")}>
+                  Last 90 days
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleSelect("All time")}>
+                  All time
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

@@ -35,16 +35,16 @@ export default function MainLayout({
   return (
     <div>
       <Header />
-      <div className="flex mx-30 my-11">
+      <div className="flex mx-30 my-11  ">
         <div>
           {sidebarItems.map(({ title, href }, index) => (
             <div key={index}>
               <Link href={href}>
                 <Button
                   variant="outline"
-                  className="w-[250px] h-9  border-none "
+                  className="w-[250px] h-9  border-none flex justify-start items-center"
                 >
-                  <p className="">{title}</p>
+                  <p className=" ">{title}</p>
                 </Button>
               </Link>
             </div>

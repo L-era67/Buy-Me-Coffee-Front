@@ -8,7 +8,6 @@ import DonationBackground from "@/utils/Image";
 export default function Donation() {
   return (
     <div>
-      <Header />
       <div className="relative">
         <DonationBackground />
       </div>

@@ -8,36 +8,35 @@ export const Sidebar = () => {
         <Link href="/home">
           <Button
             variant="outline"
-            className="w-[250px] h-9 pr-45 border-none "
+            className="w-[250px] h-9  border-none flex justify-start items-center"
           >
-            <p className="">Home</p>
+            Home
           </Button>
         </Link>
         <Link href="/explore">
           <Button
             variant="outline"
-            className="w-[250px] h-9 pr-43 border-none "
+            className="w-[250px] h-9  border-none flex justify-start items-center "
           >
-            <p className="">Explore</p>
+            Explore
           </Button>
         </Link>
         <Link href="/view-page">
           <Button
             variant="outline"
-            className="w-[250px] h-9 pr-38 border-none "
+            className="w-[250px] h-9 flex justify-start items-center border-none "
           >
-            <p className="">View page</p>
+            View page
           </Button>
         </Link>
         <Link href="/account-settings">
           <Button
             variant="outline"
-            className="w-[250px] h-9 pr-27 border-none "
+            className="w-[250px] h-9 flex justify-start items-center border-none "
           >
-            <p className="">Account settings</p>
+            Account Settings
           </Button>
         </Link>
-        sadasd
       </div>
     </div>
   );

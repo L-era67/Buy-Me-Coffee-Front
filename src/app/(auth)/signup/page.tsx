@@ -1,4 +1,4 @@
 const Signup = () => {
-  return <div>Login</div>;
+  return <div>Signup</div>;
 };
 export default Signup;
