@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div>
       <Header></Header>
-      <div className="mx-30 my-11">
+      <div className="mx-30 my-11 w-[100vw]">
         <Sidebar></Sidebar>
       </div>
     </div>

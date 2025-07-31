@@ -18,13 +18,10 @@ export const Header = () => {
   const { push } = useRouter();
 
   const onLogInPage = pathName.includes("/login");
-  console.log("L login1:", onLogInPage);
 
   const onSignUpPage = pathName.includes("/sign-up");
-  console.log("L signup", onSignUpPage);
 
   const onCreateProfile = pathName.includes("/create-profile");
-  console.log("L onCreateProfile", onCreateProfile);
 
   return (
     <div className="justify-between flex mx-30 my-4 ">
