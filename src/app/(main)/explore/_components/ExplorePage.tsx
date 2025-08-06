@@ -6,10 +6,15 @@ import { NoUser } from "./NoUsers";
 import { UserSearchInput } from "./UserSearchInput";
 
 import axios from "axios";
-
+// type user = {
+//   id: string;
+//   username: string;
+//   email: string;
+//   name?: string;
+// };
 export const ExplorePage = () => {
   const [users, setUsers] = useState([]);
-
+  const [search, setSearch] = useState("")
   const getExplore = async () => {
     try {
       const response = await axios.get("http://localhost:4001/profile/explore");
@@ -27,16 +32,22 @@ export const ExplorePage = () => {
     getExplore();
   }, []);
 
+  const filteredUsers = users.filter((user) =>
+  user.username.toLowerCase().includes(search.toLowerCase())
+);
+console.log()
+
+
   return (
     <div className=" py-10 flex flex-col gap-6">
       <p className="font-semibold text-xl">Explore creators</p>
       <div>
-        <UserSearchInput />
+        <UserSearchInput value={search} onChange={(e) => setSearch(e.target.value)}/>
       </div>
 
-      {users.length != 0 ? (
-        users?.map((item, i) => (
-          <div key={i} className=" w-full">
+      {filteredUsers.length !== 0 ? (
+        filteredUsers.map((item, i) => (
+          <div key={i} className="w-full">
             <ExploreUserSection item={item} />
           </div>
         ))
