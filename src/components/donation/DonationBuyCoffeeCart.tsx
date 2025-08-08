@@ -9,8 +9,10 @@ import { QRdialog } from "./QR-Dialog";
 import { Textarea } from "../ui/textarea";
 import axios from "axios";
 import { UserContext } from "@/provider/currentUserProvider";
-import { error } from "console";
+
 import { LoaderCoffee } from "../loading.tsx/loader";
+import { toast } from "sonner";
+import { DonationComplatePage } from "./succes";
 
 type DonationSupportType = {
   isEditable: boolean;
@@ -30,7 +32,7 @@ export const DonationBuyCoffeeCart = ({
 
   const [loading, setLoading] = useState(false);
 
-  // console.log("amount:", amount);
+ 
 
   const { userProvider } = useContext(UserContext);
 
@@ -48,6 +50,18 @@ export const DonationBuyCoffeeCart = ({
         specialMesssage: specialMsg,
       })
       .then((response) => {
+        console.log("responseeee:", response);
+        if (response.status === 200) {
+  
+          toast.custom((t) => <div className="bg-white p-4 rounded-lg w-[600px] flex flex-col items-center">
+            <DonationComplatePage />
+          </div>, {
+            position: "top-center",
+            duration: 3000,
+          
+          });
+        }
+
         console.log("ok");
       })
       .catch((error) => {
@@ -102,7 +116,9 @@ export const DonationBuyCoffeeCart = ({
                 <Coffee />
                 $10
               </Button>
-              <p className="p-2 h-9 w-9 flex justify-center items-center bg-black text-white rounded-md">{amount}</p>
+              <p className="p-2 h-9 w-9 flex justify-center items-center bg-black text-white rounded-md">
+                {amount}
+              </p>
             </div>
           </div>
         </div>
@@ -132,18 +148,18 @@ export const DonationBuyCoffeeCart = ({
             onChange={(e) => setSpecialMsg(e.target.value)}
           />
         </div>
-        {/* <div className="w-full mt-8">
-        {!isEditable ? (
-          <QRdialog />
-        ) : (
-          <Button className="w-full" disabled={true} onClick={handleSupport}>
-            Support
-          </Button>
-        )}
-      </div> */}
-        <Button className="w-full mt-8" onClick={handleSupport}>
+        <div className="w-full mt-8">
+          {!isEditable ? (
+            <QRdialog handleSupport={handleSupport} />
+          ) : (
+            <Button className="w-full" disabled={true}>
+              Support
+            </Button>
+          )}
+        </div>
+        {/* <Button className="w-full mt-8" onClick={handleSupport}>
           Support
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

@@ -26,6 +26,7 @@ export const DonationPage = ({
 
   const [userData, setUserData] = useState({} as ProfileType);
   const [loading, setLoading] = useState(false);
+  
   const getDonationPage = async () => {
     setLoading(true);
     axios
@@ -47,7 +48,7 @@ export const DonationPage = ({
             alert("Please enter your profile details!");
             push("/create-profile");
           } else {
-            alert(`error ${errorMessage}`);
+            alert(`erddddddddror ${errorMessage}`);
           }
         }
       })
@@ -80,7 +81,7 @@ export const DonationPage = ({
         <DonationBuyCoffeeCart
           isEditable={isEditable}
           userid={userData.userId}
-          name = {userData.name}
+          name={userData.name}
         />
       </div>
     </div>
