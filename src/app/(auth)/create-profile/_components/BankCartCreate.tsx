@@ -120,7 +120,7 @@ export const CreateBankCartForm = () => {
     <div className="w-[100%] h-[100vh] flex flex-col justify-center items-center ">
       <div className="flex gap-6 flex-col w-[510px]">
         <p className="text-2xl font-semibold">
-          How would you like to be paid?{" "}
+          How would you like to be paid????{" "}
         </p>
         <p className="text-sm text-muted-foreground font-normal">
           Enter location and payment details
