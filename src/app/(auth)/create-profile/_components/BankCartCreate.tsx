@@ -117,7 +117,7 @@ export const CreateBankCartForm = () => {
   if (loading) return <LoaderCoffee />;
 
   return (
-    <div className="w-[100%] h-[100vh] flex flex-col justify-center items-center ">
+    <div className="w-[100%] h-[100vh] flex flex-col justify-center  bg-white items-center ">
       <div className="flex gap-6 flex-col w-[510px]">
         <p className="text-2xl font-semibold">
           How would you like to be paid?{" "}
