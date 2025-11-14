@@ -37,7 +37,7 @@ export const Header = () => {
 
   const getDonationPage = useCallback(async () => {
     if (!userProvider?.username) return;
-    
+
     setLoadingUserData(true);
     try {
       const response = await axios.get(
@@ -132,7 +132,9 @@ export const Header = () => {
               {loadingUserData ? (
                 <Skeleton className="h-5 w-24" />
               ) : (
-                <p className="pr-9 pt-1 ">{userData.name || userProvider?.username || ""}</p>
+                <p className="pr-9 pt-1 ">
+                  {userData.name || userProvider?.username || ""}
+                </p>
               )}
               <Popover>
                 <PopoverTrigger asChild>
