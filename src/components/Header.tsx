@@ -12,11 +12,12 @@ import {
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { ProfileType } from "@/types/DonationType";
 import axios, { AxiosError } from "axios";
 import { UserContext } from "@/provider/currentUserProvider";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Header = () => {
   const pathName = usePathname();
@@ -29,11 +30,15 @@ export const Header = () => {
 
   const onCreateProfile = pathName.includes("/create-profile");
 
-  const { userProvider } = useContext(UserContext);
+  const { userProvider, refreshUser } = useContext(UserContext);
 
   const [userData, setUserData] = useState({} as ProfileType);
+  const [loadingUserData, setLoadingUserData] = useState(false);
 
-  const getDonationPage = async () => {
+  const getDonationPage = useCallback(async () => {
+    if (!userProvider?.username) return;
+    
+    setLoadingUserData(true);
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile/view/${userProvider.username}`
@@ -50,18 +55,31 @@ export const Header = () => {
           .message;
 
         if (errorMessage === "User profile not found.") {
-          toast.error("Please enter your profile details!");
+          // Don't show error toast for missing profile, just use default avatar
+          setUserData({} as ProfileType);
         } else {
           toast.error(`error ${errorMessage}`);
         }
       }
+    } finally {
+      setLoadingUserData(false);
     }
-  };
+  }, [userProvider?.username]);
 
+  // Wait for userProvider to be loaded
   useEffect(() => {
-    if (!userProvider.username) return;
-    getDonationPage();
-  }, [userProvider.username]);
+    const token = localStorage.getItem("token");
+    if (token && !userProvider?.id) {
+      refreshUser();
+    }
+  }, [userProvider?.id, refreshUser]);
+
+  // Load user profile data when username is available
+  useEffect(() => {
+    if (userProvider?.username) {
+      getDonationPage();
+    }
+  }, [userProvider?.username, getDonationPage]);
 
   return (
     <div className="justify-between flex mx-30 my-4 ">
@@ -93,21 +111,29 @@ export const Header = () => {
 
           {!onLogInPage && !onSignUpPage && !onCreateProfile && (
             <div className="flex gap-2 items-center">
-              {userData.avatarImage ? (
+              {loadingUserData || !userData.avatarImage ? (
+                loadingUserData ? (
+                  <Skeleton className="w-10 h-10 rounded-full" />
+                ) : (
+                  <img
+                    src="https://i.pinimg.com/originals/5c/44/45/5c4445eea6c9386d27b348af65ce8278.gif"
+                    alt="profile"
+                    className="w-10 h-10 rounded-full"
+                  />
+                )
+              ) : (
                 <img
                   src={userData.avatarImage}
                   alt="profile"
                   className="w-10 h-10 rounded-full"
                 />
-              ) : (
-                <img
-                  src="https://i.pinimg.com/originals/5c/44/45/5c4445eea6c9386d27b348af65ce8278.gif"
-                  alt="profile"
-                  className="w-10 h-10 rounded-full"
-                />
               )}
 
-              <p className="pr-9 pt-1 ">{userData.name}</p>
+              {loadingUserData ? (
+                <Skeleton className="h-5 w-24" />
+              ) : (
+                <p className="pr-9 pt-1 ">{userData.name || userProvider?.username || ""}</p>
+              )}
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="border-none">
@@ -118,7 +144,11 @@ export const Header = () => {
                   <Button
                     variant="outline"
                     className="border-none "
-                    onClick={() => push("/login")}
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      window.dispatchEvent(new Event("tokenSet"));
+                      push("/login");
+                    }}
                   >
                     Log Out
                   </Button>

@@ -1,14 +1,20 @@
 "use client";
 
-import { use, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AccountEarnings } from "./_components/AccountEarnings";
 import { Amount } from "./_components/Amount";
 import { Transactions } from "./_components/Transactions";
 import { UserContext } from "@/provider/currentUserProvider";
 import { DonationItemType } from "@/types/DonationType";
+import {
+  AccountEarningsSkeleton,
+  AmountSkeleton,
+  TransactionsSkeleton,
+} from "@/components/ui/skeletons";
 
 const Home = () => {
   const [donations, setDonations] = useState<DonationItemType[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [amountSelected, setAmountSelected] = useState<string>("");
 
@@ -20,15 +26,25 @@ const Home = () => {
 
   useEffect(() => {
     const donationAmounts = async () => {
-      if (!userProvider.id) return;
+      if (!userProvider.id) {
+        setLoading(false);
+        return;
+      }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/donation/received/${userProvider.id}`
-      );
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/donation/received/${userProvider.id}`
+        );
 
-      const data = await response.json();
+        const data = await response.json();
 
-      setDonations(data.donations ? data.donations : []);
+        setDonations(data.donations ? data.donations : []);
+      } catch (error) {
+        console.error("Error fetching donations:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     donationAmounts();
   }, [userProvider.id]);
@@ -41,8 +57,18 @@ const Home = () => {
     );
   });
 
+  if (loading) {
+    return (
+      <div className="w-full">
+        <AccountEarningsSkeleton />
+        <AmountSkeleton />
+        <TransactionsSkeleton />
+      </div>
+    );
+  }
+
   return (
-    <div className=" max-w-[1200px] ">
+    <div className="w-full">
       <AccountEarnings />
       <Amount
         amount={amountSelected}

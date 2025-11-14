@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import z, { success } from "zod";
+import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 const formSchema = z.object({
@@ -38,8 +38,15 @@ export const LogInEmailPassword = () => {
         }
       );
       localStorage.setItem("token", response.data.accesstoken);
-      push("/home");
-    } catch (error) {
+
+      // Dispatch custom event to trigger user data refresh
+      window.dispatchEvent(new Event("tokenSet"));
+
+      // Small delay to ensure context updates before navigation
+      setTimeout(() => {
+        push("/home");
+      }, 100);
+    } catch {
       toast.error("Error");
     }
   };
@@ -84,6 +91,16 @@ export const LogInEmailPassword = () => {
           <p className="text-sm mb-2 text-gray-600">
             Enter your email and password
           </p>
+
+          <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="text-xs font-semibold text-gray-700 mb-2">
+              Test Account:
+            </p>
+            <p className="text-xs text-gray-600">
+              Email: boloroots47@gmail.com
+            </p>
+            <p className="text-xs text-gray-600">Password: 1234</p>
+          </div>
 
           <Form {...form}>
             <form
