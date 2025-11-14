@@ -8,9 +8,10 @@ import { CreateUserProfile } from "@/components/userInfo/createProfileInfo/Creat
 import { ProfileImageUploader } from "@/components/userInfo/createProfileInfo/profileImageuploader";
 
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/provider/currentUserProvider";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const createUserSchema = Yup.object({
   profileImage: Yup.string().required("Please enter image"),
@@ -25,10 +26,34 @@ type createProfileType = {
 
 export const CreateProfile = ({ handleNext }: createProfileType) => {
   const [loading, setLoading] = useState(false);
+  const [waitingForUser, setWaitingForUser] = useState(true);
 
-  const { userProvider } = useContext(UserContext);
+  const { userProvider, refreshUser } = useContext(UserContext);
 
-  const url = process.env.BACKEND_URL || "http://localhost:4001";
+  const url = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || "http://localhost:4001";
+
+  // Wait for userProvider.id to be available
+  useEffect(() => {
+    if (userProvider?.id) {
+      setWaitingForUser(false);
+      return;
+    }
+
+    // If no user id, try to refresh
+    const token = localStorage.getItem("token");
+    if (token) {
+      const loadUser = async () => {
+        await refreshUser();
+        // Give context time to update
+        setTimeout(() => {
+          setWaitingForUser(false);
+        }, 500);
+      };
+      loadUser();
+    } else {
+      setWaitingForUser(false);
+    }
+  }, [userProvider?.id, refreshUser]);
 
   const createProfilePost = async (
     profileImage: string,
@@ -36,6 +61,11 @@ export const CreateProfile = ({ handleNext }: createProfileType) => {
     name: string,
     socialURL: string
   ) => {
+    if (!userProvider?.id) {
+      toast.error("User information is not available. Please refresh the page.");
+      return;
+    }
+
     try {
       await axios.post(`${url}/profile/${userProvider.id}`, {
         avatarImage: profileImage,
@@ -43,8 +73,9 @@ export const CreateProfile = ({ handleNext }: createProfileType) => {
         name,
         socialMediaURL: socialURL,
       });
+      toast.success("Profile created successfully!");
     } catch (error) {
-      toast.error("Error");
+      toast.error("Error creating profile");
     }
   };
 
@@ -94,6 +125,23 @@ export const CreateProfile = ({ handleNext }: createProfileType) => {
     inputErrorMessage: errors[name],
   });
 
+  if (waitingForUser || !userProvider?.id) {
+    return (
+      <div className="w-[100%] h-[100vh] flex flex-col justify-center items-center">
+        <div className="flex gap-6 flex-col w-[510px]">
+          <Skeleton className="h-8 w-64 mb-4" />
+          <Skeleton className="h-32 w-full rounded-lg" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <div className="text-right mt-[24px]">
+            <Skeleton className="h-10 w-32 ml-auto" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-[100%] h-[100vh] flex flex-col justify-center items-center ">
       <form onSubmit={handleSubmit} className="flex gap-6 flex-col w-[510px]">
@@ -110,7 +158,7 @@ export const CreateProfile = ({ handleNext }: createProfileType) => {
           profileURLInputProps={getFieldProps("socialURL")}
         />
         <div className="text-right mt-[24px]">
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading || !userProvider?.id}>
             {loading ? "...loading" : "Continue"}
           </Button>
         </div>

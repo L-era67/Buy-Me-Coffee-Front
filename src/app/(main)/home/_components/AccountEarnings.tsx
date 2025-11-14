@@ -94,49 +94,62 @@ export const AccountEarnings = () => {
         alert("Page link copied to clipboard!");
       })
       .catch((err) => {
-       toast.error("Error")
+        toast.error("Error");
       });
   };
 
   return (
-    <div className="">
-      <div className="border-2 h-[257px] border-[#E4E4E7] rounded-lg">
-        <div className="mx-6 my-6 flex justify-between ">
-          <div className="flex gap-4 items-center">
+    <div className="w-full">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+        <div className="px-6 pt-6 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex gap-4 items-center flex-1 min-w-0">
             {userData.avatarImage ? (
               <img
                 src={userData.avatarImage}
                 alt="profile"
-                className="w-10 h-10 rounded-full"
+                className="w-12 h-12 rounded-full ring-2 ring-white shadow-md flex-shrink-0"
               />
             ) : (
               <img
                 src="https://i.pinimg.com/originals/5c/44/45/5c4445eea6c9386d27b348af65ce8278.gif"
                 alt="profile"
-                className="w-10 h-10 rounded-full"
+                className="w-12 h-12 rounded-full ring-2 ring-white shadow-md flex-shrink-0"
               />
             )}
 
-            <div>
-              <p className="font-bold">{userData.name}</p>
-              <p>{userData.socialMediaURL}</p>
+            <div className="min-w-0">
+              <p className="font-bold text-gray-900 text-lg truncate">
+                {userData.name}
+              </p>
+              <p className="text-gray-500 text-sm truncate">
+                {userData.socialMediaURL}
+              </p>
             </div>
           </div>
-          <div>
-            <Button onClick={handleShare}>
-              <SquareArrowOutUpRight></SquareArrowOutUpRight>
-              Share Page Link
+          <div className="flex-shrink-0">
+            <Button
+              onClick={handleShare}
+              className="bg-slate-900 hover:bg-slate-800 text-white shadow-sm hover:shadow-md transition-all duration-200 w-full sm:w-auto"
+            >
+              <SquareArrowOutUpRight className="mr-2 h-4 w-4"></SquareArrowOutUpRight>
+              Share Page
             </Button>
           </div>
         </div>
-        <div className="border-1 border-[#E4E4E7] min-w-[1000px] mx-6"></div>
-        <div className="mx-6 my-4 ">
-          <div className="flex gap-4 items-center">
-            <p className="font-[600] text-[20px]">Earnings</p>
+
+        <div className="border-t border-gray-200 mx-6"></div>
+
+        <div className="px-6 py-5">
+          <div className="flex gap-3 items-center mb-4">
+            <p className="font-semibold text-xl text-gray-800">Earnings</p>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {selected} <ChevronDown></ChevronDown>
+                <Button
+                  variant="outline"
+                  className="border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors duration-200"
+                >
+                  {selected}{" "}
+                  <ChevronDown className="ml-2 h-4 w-4"></ChevronDown>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="start">
@@ -153,8 +166,11 @@ export const AccountEarnings = () => {
             </DropdownMenu>
           </div>
           <div>
-            <div>
-              <p className="mt-5 font-[700] text-[36px]">${totalEarnings}</p>
+            <div className="flex items-baseline gap-2">
+              <p className="font-bold text-4xl text-gray-900">
+                ${totalEarnings || 0}
+              </p>
+              <span className="text-gray-400 text-sm font-medium">USD</span>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
-import z, { success, unknown } from "zod";
+import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import axios, { AxiosError } from "axios";
@@ -18,6 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrendingUpDownIcon } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "@/provider/currentUserProvider";
 
 const formSchema = z.object({
   email: z
@@ -31,6 +33,8 @@ const formSchema = z.object({
 
 export const SignUpEmailPassword = ({ userName }: { userName: string }) => {
   const router = useRouter();
+  const { refreshUser, userProvider } = useContext(UserContext);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,15 +62,16 @@ export const SignUpEmailPassword = ({ userName }: { userName: string }) => {
 
       localStorage.setItem("token", response?.data?.signUpUserAccessToken);
 
+      // Dispatch custom event to trigger user data refresh
+      window.dispatchEvent(new Event("tokenSet"));
+
       return TrendingUpDownIcon;
     } catch (error) {
-
       const axiosError = error as AxiosError;
 
       if (axiosError.response) {
         const errorMessage = (axiosError.response.data as { message: string })
           .message;
-
 
         if (errorMessage === "User profile already created") {
           alert("User profile already created");
@@ -79,8 +84,15 @@ export const SignUpEmailPassword = ({ userName }: { userName: string }) => {
     }
   };
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  // Navigate to create-profile when user data is loaded
+  useEffect(() => {
+    if (isNavigating && userProvider?.id) {
+      router.push("/create-profile");
+      setIsNavigating(false);
+    }
+  }, [isNavigating, userProvider?.id, router]);
 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // if (!values || userName) return;
 
     const isSuccess = await handleOtgoo(
@@ -92,7 +104,16 @@ export const SignUpEmailPassword = ({ userName }: { userName: string }) => {
     if (!isSuccess) {
       alert("User profile already created");
     } else {
-      router.push("/create-profile");
+      // Trigger user data refresh and wait for it
+      setIsNavigating(true);
+      await refreshUser();
+
+      // If userProvider already has id, navigate immediately
+      // Otherwise, useEffect will handle navigation when userProvider updates
+      if (userProvider?.id) {
+        router.push("/create-profile");
+        setIsNavigating(false);
+      }
     }
   }
 

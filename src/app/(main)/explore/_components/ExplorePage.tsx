@@ -10,6 +10,7 @@ import { parseAsInteger, useQueryState } from "nuqs";
 
 import { Button } from "@/components/ui/button";
 import { ProfileWithUserNameType } from "@/types/DonationType";
+import { ExploreUserSectionSkeleton } from "@/components/ui/skeletons";
 
 import { toast } from "sonner";
 
@@ -21,6 +22,7 @@ type exploreType = {
 
 export const ExplorePage = () => {
   const [users, setUsers] = useState<null | exploreType>(null);
+  const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useQueryState<number>(
     "page",
@@ -28,6 +30,7 @@ export const ExplorePage = () => {
   );
 
   const getExplore = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/profile/explore?page=${page}`
@@ -38,11 +41,12 @@ export const ExplorePage = () => {
       setUsers(data);
     } catch (error) {
       toast.error("Error");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    // if (!users) return;
     getExplore();
   }, [page]);
 
@@ -63,7 +67,15 @@ export const ExplorePage = () => {
         <UserSearchInput />
       </div>
 
-      {users?.usersProfile.length != 0 ? (
+      {loading ? (
+        <div className="flex flex-col gap-6">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="w-full">
+              <ExploreUserSectionSkeleton />
+            </div>
+          ))}
+        </div>
+      ) : users?.usersProfile.length != 0 ? (
         users?.usersProfile.map((item, i) => (
           <div key={i} className=" w-full">
             <ExploreUserSection item={item} />
